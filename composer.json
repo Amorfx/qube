@@ -1,0 +1,30 @@
+{
+    "name": "amorfx/qube",
+    "description": "Qube is a lightweight and simple dependency injection container.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Amorfx\\Qube\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Clément Décou"
+        }
+    ],
+    "require-dev": {
+        "phpstan/phpstan": "^1.10",
+        "phpunit/phpunit": "^10.2",
+        "friendsofphp/php-cs-fixer": "^3.13"
+    },
+    "require": {
+        "psr/container": "^2.0"
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage",
+        "format": "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php --allow-risky=yes",
+        "analyse": "vendor/bin/phpstan analyse -c phpstan.neon"
+    }
+}
