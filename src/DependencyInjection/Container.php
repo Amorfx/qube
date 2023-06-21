@@ -2,18 +2,36 @@
 
 namespace Amorfx\Qube\DependencyInjection;
 
+use Amorfx\Qube\Exceptions\AlreadySetParameterException;
 use Amorfx\Qube\Exceptions\AlreadySetServiceException;
 use Amorfx\Qube\Exceptions\NotFoundException;
+use Closure;
 
 class Container implements ContainerInterface
 {
+    /**
+     * @var array<object>
+     */
     private array $services = [];
 
+    /**
+     * @var array<mixed>
+     */
     private array $parameters = [];
 
     public function get(string $id)
     {
-        // TODO: Implement get() method.
+        if (! $this->has($id)) {
+            throw new NotFoundException('The service ' . $id . ' is not bind in the container. Please use set function.');
+        }
+
+        $service = $this->services[$id];
+        if ($service instanceof Closure) {
+            $service = $service($this);
+            $this->services[$id] = $service;
+        }
+
+        return $service;
     }
 
     /**
@@ -30,7 +48,11 @@ class Container implements ContainerInterface
 
     public function setParameter(string $parameterName, mixed $value): void
     {
-        // TODO: Implement setParameter() method.
+        if ($this->hasParameter($parameterName)) {
+            throw new AlreadySetParameterException('The parameter ' . $parameterName . ' is already set with the value ' . $this->getParameter($parameterName));
+        }
+
+        $this->parameters[$parameterName] = $value;
     }
 
     public function has(string $id): bool
