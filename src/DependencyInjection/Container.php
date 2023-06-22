@@ -49,6 +49,7 @@ class Container implements ContainerInterface
 
         if ($value instanceof Closure) {
             $this->services[$id] = new Definition($value, $isShared);
+
             return;
         }
 
