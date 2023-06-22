@@ -8,6 +8,11 @@
             "Amorfx\\Qube\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Amorfx\\Qube\\Tests\\": "tests"
+        }
+    },
     "authors": [
         {
             "name": "Clément Décou"
