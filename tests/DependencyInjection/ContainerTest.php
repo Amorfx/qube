@@ -54,4 +54,19 @@ class ContainerTest extends TestCase
         self::expectException(NotFoundException::class);
         $this->container->get(SampleService::class);
     }
+
+    public function test_service_is_shared(): void
+    {
+        $this->container->set(SampleService::class, fn(ContainerInterface $container) => new SampleService('ok'));
+        $service = $this->container->get(SampleService::class);
+        self::assertSame($service, $this->container->get(SampleService::class));
+    }
+
+    public function test_service_is_not_shared(): void
+    {
+        $this->container->set(SampleService::class, fn(ContainerInterface $container) => new SampleService('ok'), false);
+        $service = $this->container->get(SampleService::class);
+        self::assertInstanceOf(SampleService::class, $service);
+        self::assertNotSame($service, $this->container->get(SampleService::class));
+    }
 }

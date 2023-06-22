@@ -26,9 +26,13 @@ class Container implements ContainerInterface
         }
 
         $service = $this->services[$id];
-        if ($service instanceof Closure) {
-            $service = $service($this);
-            $this->services[$id] = $service;
+        if ($service instanceof Definition) {
+            $definition = $service;
+            $service = $definition->create($this);
+
+            if ($definition->isShared()) {
+                $this->services[$id] = $service;
+            }
         }
 
         return $service;
@@ -37,10 +41,15 @@ class Container implements ContainerInterface
     /**
      * @throws AlreadySetServiceException
      */
-    public function set(string $id, mixed $value): void
+    public function set(string $id, object $value, bool $isShared = true): void
     {
         if ($this->has($id)) {
             throw new AlreadySetServiceException('The service ' . $id . ' is already set in the container');
+        }
+
+        if ($value instanceof Closure) {
+            $this->services[$id] = new Definition($value, $isShared);
+            return;
         }
 
         $this->services[$id] = $value;
