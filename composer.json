@@ -22,7 +22,8 @@
         "phpstan/phpstan": "^1.10",
         "phpunit/phpunit": "^10.2",
         "friendsofphp/php-cs-fixer": "^3.13",
-        "symfony/var-dumper": "^6.3"
+        "symfony/var-dumper": "^6.3",
+        "phpbench/phpbench": "^1.2"
     },
     "require": {
         "psr/container": "^2.0"
