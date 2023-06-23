@@ -6,6 +6,8 @@ use Amorfx\Qube\DependencyInjection\Container;
 use Amorfx\Qube\DependencyInjection\ContainerInterface;
 use Amorfx\Qube\Exceptions\AlreadySetParameterException;
 use Amorfx\Qube\Exceptions\NotFoundException;
+use Amorfx\Qube\Tests\Fixtures\OtherSampleService;
+use Amorfx\Qube\Tests\Fixtures\SampleContextService;
 use Amorfx\Qube\Tests\Fixtures\SampleService;
 use PHPUnit\Framework\TestCase;
 
@@ -68,5 +70,26 @@ class ContainerTest extends TestCase
         $service = $this->container->get(SampleService::class);
         self::assertInstanceOf(SampleService::class, $service);
         self::assertNotSame($service, $this->container->get(SampleService::class));
+    }
+
+    public function test_get_service_by_tags(): void
+    {
+        $this->container->set(SampleService::class, fn (ContainerInterface $container) => new SampleService('ok'));
+        $this->container->set(OtherSampleService::class, fn (ContainerInterface $container) => new OtherSampleService('test'), tags: ['mytag']);
+        $this->container->set(SampleContextService::class, fn (ContainerInterface $container) => new SampleContextService(), tags: ['mytag', 'mytag2']);
+        $services = $this->container->getByTag('mytag');
+        self::assertCount(2, $services);
+        self::assertInstanceOf(OtherSampleService::class, $services[0]);
+        self::assertInstanceOf(SampleContextService::class, $services[1]);
+
+        $services = $this->container->getByTag('mytag2');
+        self::assertCount(1, $services);
+        self::assertInstanceOf(SampleContextService::class, $services[0]);
+    }
+
+    public function test_get_service_by_tags_not_found(): void
+    {
+        self::expectException(NotFoundException::class);
+        $this->container->getByTag('mytag');
     }
 }

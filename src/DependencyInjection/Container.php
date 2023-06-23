@@ -15,6 +15,11 @@ class Container implements ContainerInterface
     private array $services = [];
 
     /**
+     * @var array <string, array<string>>
+     */
+    private array $tagsServiceBags = [];
+
+    /**
      * @var array<mixed>
      */
     private array $parameters = [];
@@ -41,10 +46,16 @@ class Container implements ContainerInterface
     /**
      * @throws AlreadySetServiceException
      */
-    public function set(string $id, object $value, bool $isShared = true): void
+    public function set(string $id, object $value, bool $isShared = true, array $tags = []): void
     {
         if ($this->has($id)) {
             throw new AlreadySetServiceException('The service ' . $id . ' is already set in the container');
+        }
+
+        if (! empty($tags)) {
+            foreach ($tags as $tagName) {
+                $this->addServiceToTag($tagName, $id);
+            }
         }
 
         if ($value instanceof Closure) {
@@ -82,5 +93,32 @@ class Container implements ContainerInterface
     public function hasParameter(string $parameterName): bool
     {
         return array_key_exists($parameterName, $this->parameters);
+    }
+
+    private function addServiceToTag(string $tagName, string $serviceId): void
+    {
+        if (! array_key_exists($tagName, $this->tagsServiceBags)) {
+            $this->tagsServiceBags[$tagName] = [];
+        }
+
+        if (in_array($serviceId, $this->tagsServiceBags[$tagName])) {
+            return;
+        }
+
+        $this->tagsServiceBags[$tagName][] = $serviceId;
+    }
+
+    public function getByTag(string $tagName): array
+    {
+        if (! array_key_exists($tagName, $this->tagsServiceBags)) {
+            throw new NotFoundException('The tag ' . $tagName . ' not exist in container. Have you set a service with this tag ?');
+        }
+
+        $services = [];
+        foreach ($this->tagsServiceBags[$tagName] as $serviceId) {
+            $services[] = $this->get($serviceId);
+        }
+
+        return $services;
     }
 }
