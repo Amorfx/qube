@@ -44,6 +44,11 @@ class Container implements ContainerInterface
     }
 
     /**
+     * @param string $id
+     * @param object $value
+     * @param bool $isShared
+     * @param array<string> $tags
+     * @return void
      * @throws AlreadySetServiceException
      */
     public function set(string $id, object $value, bool $isShared = true, array $tags = []): void
@@ -108,6 +113,13 @@ class Container implements ContainerInterface
         $this->tagsServiceBags[$tagName][] = $serviceId;
     }
 
+    /**
+     * @param string $tagName
+     * @return array<object>
+     * @throws NotFoundException
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
     public function getByTag(string $tagName): array
     {
         if (! array_key_exists($tagName, $this->tagsServiceBags)) {
