@@ -74,9 +74,9 @@ class ContainerTest extends TestCase
 
     public function test_get_service_by_tags(): void
     {
-        $this->container->set(SampleService::class, fn (ContainerInterface $container) => new SampleService('ok'), false);
-        $this->container->set(OtherSampleService::class, fn (ContainerInterface $container) => new OtherSampleService('test'), false, ['mytag']);
-        $this->container->set(SampleContextService::class, fn (ContainerInterface $container) => new SampleContextService(), false, ['mytag', 'mytag2']);
+        $this->container->set(SampleService::class, fn (ContainerInterface $container) => new SampleService('ok'));
+        $this->container->set(OtherSampleService::class, fn (ContainerInterface $container) => new OtherSampleService('test'), tags: ['mytag']);
+        $this->container->set(SampleContextService::class, fn (ContainerInterface $container) => new SampleContextService(), tags: ['mytag', 'mytag2']);
         $services = $this->container->getByTag('mytag');
         self::assertCount(2, $services);
         self::assertInstanceOf(OtherSampleService::class, $services[0]);
@@ -85,5 +85,11 @@ class ContainerTest extends TestCase
         $services = $this->container->getByTag('mytag2');
         self::assertCount(1, $services);
         self::assertInstanceOf(SampleContextService::class, $services[0]);
+    }
+
+    public function test_get_service_by_tags_not_found(): void
+    {
+        self::expectException(NotFoundException::class);
+        $this->container->getByTag('mytag');
     }
 }
