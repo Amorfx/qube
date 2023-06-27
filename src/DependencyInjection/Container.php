@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Amorfx\Qube\DependencyInjection;
 
+use Amorfx\Qube\Contracts\Service\ServiceSubscriberInterface;
 use Amorfx\Qube\Exceptions\AlreadySetParameterException;
 use Amorfx\Qube\Exceptions\AlreadySetServiceException;
 use Amorfx\Qube\Exceptions\NotFoundException;
@@ -27,6 +28,16 @@ class Container implements ContainerInterface
      */
     private array $parameters = [];
 
+    /**
+     * @param array<string, object> $services
+     */
+    public function __construct(array $services = [])
+    {
+        if (! empty($services)) {
+            $this->services = $services;
+        }
+    }
+
     public function get(string $id)
     {
         if (! $this->has($id)) {
@@ -37,6 +48,7 @@ class Container implements ContainerInterface
         if ($service instanceof Definition) {
             $definition = $service;
             $service = $definition->create($this);
+            $this->performServiceLocator($service);
 
             if ($definition->isShared()) {
                 $this->services[$id] = $service;
@@ -136,6 +148,24 @@ class Container implements ContainerInterface
     {
         foreach ($this->tagsServiceBags[$tagName] as $serviceId) {
             yield $this->get($serviceId);
+        }
+    }
+
+    private function performServiceLocator(object $service): void
+    {
+        $classImplements = class_implements($service);
+        if ($classImplements !== false && in_array(ServiceSubscriberInterface::class, $classImplements)) {
+            /** @var ServiceSubscriberInterface $service */
+            $allSubscribedService = $service::getSubscribedServices();
+            $services = [];
+            if (! empty($allSubscribedService)) {
+                foreach ($allSubscribedService as $serviceID) {
+                    $services[$serviceID] = &$this->services[$serviceID];
+                }
+            }
+            $container = new Container($services);
+            $locator = new ServiceLocator($container);
+            $service->setLocator($locator);
         }
     }
 }

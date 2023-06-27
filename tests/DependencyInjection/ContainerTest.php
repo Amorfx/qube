@@ -9,6 +9,7 @@ use Amorfx\Qube\Exceptions\NotFoundException;
 use Amorfx\Qube\Tests\Fixtures\OtherSampleService;
 use Amorfx\Qube\Tests\Fixtures\SampleContextService;
 use Amorfx\Qube\Tests\Fixtures\SampleService;
+use Amorfx\Qube\Tests\Fixtures\SampleServiceSubscriber;
 use PHPUnit\Framework\TestCase;
 
 class ContainerTest extends TestCase
@@ -91,5 +92,19 @@ class ContainerTest extends TestCase
     {
         self::expectException(NotFoundException::class);
         $this->container->getByTag('mytag');
+    }
+
+    public function test_get_service_with_service_subscriber(): void
+    {
+        $this->container->set(SampleService::class, fn (ContainerInterface $container) => new SampleService('the_test'));
+        $this->container->set(SampleContextService::class, fn (ContainerInterface $container) => new SampleContextService());
+        $this->container->set(SampleServiceSubscriber::class, fn (ContainerInterface $container) => new SampleServiceSubscriber());
+
+        /** @var SampleServiceSubscriber $sampleServiceSubscriber */
+        $sampleServiceSubscriber = $this->container->get(SampleServiceSubscriber::class);
+
+        self::assertSame('the_test', $sampleServiceSubscriber->getSampleServiceProperty());
+        self::assertSame(10, $sampleServiceSubscriber->getCurrentID());
+        self::assertSame($sampleServiceSubscriber->getSampleContextService(), $this->container->get(SampleContextService::class));
     }
 }
