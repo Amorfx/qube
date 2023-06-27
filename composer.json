@@ -1,5 +1,5 @@
 {
-    "name": "amorfx/qube",
+    "name": "clementdecou/qube",
     "description": "Qube is a lightweight and simple dependency injection container.",
     "type": "library",
     "license": "MIT",

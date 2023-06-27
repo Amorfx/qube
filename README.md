@@ -1,4 +1,4 @@
-# qube
+# Qube
 
 # This is my package qube-php
 
@@ -14,7 +14,11 @@ TODO
 
 ## Installation
 
-TODO
+You can install the package via composer:
+
+```bash
+composer require clementdecou/qube
+```
 
 ## Usage
 
