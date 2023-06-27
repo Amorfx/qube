@@ -77,12 +77,12 @@ class ContainerTest extends TestCase
         $this->container->set(SampleService::class, fn (ContainerInterface $container) => new SampleService('ok'));
         $this->container->set(OtherSampleService::class, fn (ContainerInterface $container) => new OtherSampleService('test'), tags: ['mytag']);
         $this->container->set(SampleContextService::class, fn (ContainerInterface $container) => new SampleContextService(), tags: ['mytag', 'mytag2']);
-        $services = $this->container->getByTag('mytag');
+        $services = iterator_to_array($this->container->getByTag('mytag'));
         self::assertCount(2, $services);
         self::assertInstanceOf(OtherSampleService::class, $services[0]);
         self::assertInstanceOf(SampleContextService::class, $services[1]);
 
-        $services = $this->container->getByTag('mytag2');
+        $services = iterator_to_array($this->container->getByTag('mytag2'));
         self::assertCount(1, $services);
         self::assertInstanceOf(SampleContextService::class, $services[0]);
     }

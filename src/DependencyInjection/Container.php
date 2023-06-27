@@ -8,6 +8,7 @@ use Amorfx\Qube\Exceptions\AlreadySetParameterException;
 use Amorfx\Qube\Exceptions\AlreadySetServiceException;
 use Amorfx\Qube\Exceptions\NotFoundException;
 use Closure;
+use Generator;
 
 class Container implements ContainerInterface
 {
@@ -117,22 +118,24 @@ class Container implements ContainerInterface
 
     /**
      * @param string $tagName
-     * @return array<object>
+     * @return Generator
      * @throws NotFoundException
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    public function getByTag(string $tagName): array
+    public function getByTag(string $tagName): Generator
     {
         if (! array_key_exists($tagName, $this->tagsServiceBags)) {
             throw new NotFoundException('The tag ' . $tagName . ' not exist in container. Have you set a service with this tag ?');
         }
 
-        $services = [];
-        foreach ($this->tagsServiceBags[$tagName] as $serviceId) {
-            $services[] = $this->get($serviceId);
-        }
+        return $this->createGenerator($tagName);
+    }
 
-        return $services;
+    private function createGenerator(string $tagName): Generator
+    {
+        foreach ($this->tagsServiceBags[$tagName] as $serviceId) {
+            yield $this->get($serviceId);
+        }
     }
 }
