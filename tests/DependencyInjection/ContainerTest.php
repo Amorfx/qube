@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Amorfx\Qube\Tests\DependencyInjection;
 
 use Amorfx\Qube\DependencyInjection\Container;

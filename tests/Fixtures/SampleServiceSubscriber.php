@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Amorfx\Qube\Tests\Fixtures;
 
 use Amorfx\Qube\Contracts\Service\ServiceSubscriberInterface;
