@@ -168,4 +168,36 @@ class Container implements ContainerInterface
             $service->setLocator($locator);
         }
     }
+
+    /**
+     * @param array<string>|array<object> $providers
+     */
+    public function registerProviders(array $providers): ContainerInterface
+    {
+        foreach ($providers as $provider) {
+            $isObject = is_object($provider);
+            if (! $isObject && ! class_exists($provider)) {
+                throw new \InvalidArgumentException('The provider ' . $provider . ' not exist.');
+            }
+
+            if (! in_array(ServiceProviderInterface::class, class_implements($provider))) { // @phpstan-ignore-line
+                throw new \InvalidArgumentException('The provider ' . $provider . ' must implement ' . ServiceProviderInterface::class . ' interface.'); // @phpstan-ignore-line
+            }
+
+            /** @var ServiceProviderInterface $provider */
+            if (! $isObject) {
+                $provider = new $provider();
+            }
+            $this->registerProvider($provider);
+        }
+
+        return $this;
+    }
+
+    public function registerProvider(ServiceProviderInterface $provider): ContainerInterface
+    {
+        $provider->register($this);
+
+        return $this;
+    }
 }

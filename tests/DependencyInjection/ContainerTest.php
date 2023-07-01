@@ -6,12 +6,15 @@ namespace Amorfx\Qube\Tests\DependencyInjection;
 
 use Amorfx\Qube\DependencyInjection\Container;
 use Amorfx\Qube\DependencyInjection\ContainerInterface;
+use Amorfx\Qube\DependencyInjection\ServiceProviderInterface;
 use Amorfx\Qube\Exceptions\AlreadySetParameterException;
 use Amorfx\Qube\Exceptions\NotFoundException;
 use Amorfx\Qube\Tests\Fixtures\OtherSampleService;
 use Amorfx\Qube\Tests\Fixtures\SampleContextService;
 use Amorfx\Qube\Tests\Fixtures\SampleService;
+use Amorfx\Qube\Tests\Fixtures\SampleServiceProvider;
 use Amorfx\Qube\Tests\Fixtures\SampleServiceSubscriber;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 class ContainerTest extends TestCase
@@ -108,5 +111,61 @@ class ContainerTest extends TestCase
         self::assertSame('the_test', $sampleServiceSubscriber->getSampleServiceProperty());
         self::assertSame(10, $sampleServiceSubscriber->getCurrentID());
         self::assertSame($sampleServiceSubscriber->getSampleContextService(), $this->container->get(SampleContextService::class));
+    }
+
+    public function test_service_provider_called(): void
+    {
+        $this->container->registerProvider(new class () implements \Amorfx\Qube\DependencyInjection\ServiceProviderInterface {
+            public function register(ContainerInterface $container): void
+            {
+                $container->set(SampleService::class, fn (ContainerInterface $container) => new SampleService('the_test'));
+            }
+        });
+        self::assertSame('the_test', $this->container->get(SampleService::class)->sampleStringProperty);
+    }
+
+    public function test_multiple_service_providers_called(): void
+    {
+        $providers = [
+            new class () implements \Amorfx\Qube\DependencyInjection\ServiceProviderInterface {
+                public function register(ContainerInterface $container): void
+                {
+                    $container->set(SampleService::class, fn (ContainerInterface $container) => new SampleService('the_test'));
+                }
+            },
+            new class () implements \Amorfx\Qube\DependencyInjection\ServiceProviderInterface {
+                public function register(ContainerInterface $container): void
+                {
+                    $container->set(OtherSampleService::class, fn (ContainerInterface $container) => new OtherSampleService('the_test2'));
+                }
+            },
+        ];
+        $this->container->registerProviders($providers);
+        self::assertSame('the_test', $this->container->get(SampleService::class)->sampleStringProperty);
+        self::assertSame('the_test2', $this->container->get(OtherSampleService::class)->otherSampleStringProperty);
+    }
+
+    public function test_it_throw_exception_when_register_provider_not_exist(): void
+    {
+        self::expectException(InvalidArgumentException::class);
+        $this->container->registerProviders(['NotExist']);
+    }
+
+    public function test_it_throw_exception_when_provider_not_implement_interface(): void
+    {
+        self::expectException(InvalidArgumentException::class);
+        $this->container->registerProviders([SampleService::class]);
+    }
+
+    public function test_provider_register_also_provider(): void
+    {
+        $provider = new class () implements ServiceProviderInterface {
+            public function register(ContainerInterface $container): void
+            {
+                $container->registerProviders([SampleServiceProvider::class]);
+            }
+        };
+        $this->container->registerProvider($provider);
+        self::assertSame('the_test', $this->container->get(SampleService::class)->sampleStringProperty);
     }
 }

@@ -32,7 +32,7 @@ class MemoryConsumeBench
             $container->set('service.' . $number, static function (ContainerInterface $container) use ($number) {
                 return new SampleService($container->getParameter('number' . $number));
             });
-            $container->setParameter('number' . $number, $number);
+            $container->setParameter('number' . $number, (string) $number);
             $container->get('service.' . $number);
         }
     }

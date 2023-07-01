@@ -34,5 +34,22 @@ interface ContainerInterface extends \Psr\Container\ContainerInterface
      */
     public function hasParameter(string $parameterName): bool;
 
+    /**
+     * @param string $id
+     * @param object $value
+     * @param bool $isShared
+     * @param array<string> $tags
+     * @return void
+     */
+    public function set(string $id, object $value, bool $isShared = true, array $tags = []): void;
+
     public function setParameter(string $parameterName, mixed $value): void;
+
+    /**
+     *
+     * @param array<string> $providers
+     */
+    public function registerProviders(array $providers): ContainerInterface;
+
+    public function registerProvider(ServiceProviderInterface $provider): ContainerInterface;
 }

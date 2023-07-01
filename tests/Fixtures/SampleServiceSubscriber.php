@@ -7,7 +7,7 @@ namespace Amorfx\Qube\Tests\Fixtures;
 use Amorfx\Qube\Contracts\Service\ServiceSubscriberInterface;
 use Amorfx\Qube\Contracts\Service\ServiceSubscriberTrait;
 
-class SampleServiceSubscriber implements ServiceSubscriberInterface
+class SampleServiceSubscriber implements ServiceSubscriberInterface, SampleInterface
 {
     use ServiceSubscriberTrait;
 
