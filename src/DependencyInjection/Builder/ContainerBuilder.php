@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Amorfx\Qube\DependencyInjection\Builder;
 
+use Amorfx\Qube\DependencyInjection\Builder\Validators\ServiceConfigValidator;
 use Amorfx\Qube\DependencyInjection\Container;
 use Amorfx\Qube\DependencyInjection\ContainerInterface;
+use Amorfx\Qube\Exceptions\NotFoundException;
 
 class ContainerBuilder
 {
@@ -32,8 +34,7 @@ class ContainerBuilder
                 throw new \Exception('Config is not an array'); // TODO change type exception
             }
 
-            $this
-                ->processProviders($config)
+            $this->processProviders($config)
                 ->processParams($config);
         }
 
@@ -49,8 +50,29 @@ class ContainerBuilder
 
     private function processParams(array $config): self
     {
+        if (! array_key_exists('parameters', $config) || empty($config['parameters'])) {
+            return $this;
+        }
+
         foreach ($config['parameters'] as $id => $value) {
             $this->container->setParameter($id, $value);
+        }
+
+        return $this;
+    }
+
+    private function processServices(array $config): self
+    {
+        if (! array_key_exists('services', $config) || empty($config['services'])) {
+            return $this;
+        }
+
+        $serviceConfigValidator = new ServiceConfigValidator();
+
+        foreach ($config['services'] as $id => $arrayServiceConfig) {
+            $serviceConfigValidator->validateOrThrow($arrayServiceConfig);
+
+            $this->container->set($id, $factory);
         }
 
         return $this;
