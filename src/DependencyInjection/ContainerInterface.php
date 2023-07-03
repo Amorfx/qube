@@ -51,5 +51,5 @@ interface ContainerInterface extends \Psr\Container\ContainerInterface
      */
     public function registerProviders(array $providers): void;
 
-    public function registerProvider(ServiceProviderInterface $provider): ContainerInterface;
+    public function registerProvider(ServiceProviderInterface $provider): void;
 }

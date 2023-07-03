@@ -192,10 +192,8 @@ class Container implements ContainerInterface
         }
     }
 
-    public function registerProvider(ServiceProviderInterface $provider): ContainerInterface
+    public function registerProvider(ServiceProviderInterface $provider): void
     {
         $provider->register($this);
-
-        return $this;
     }
 }
