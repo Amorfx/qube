@@ -49,7 +49,7 @@ interface ContainerInterface extends \Psr\Container\ContainerInterface
      *
      * @param array<string> $providers
      */
-    public function registerProviders(array $providers): ContainerInterface;
+    public function registerProviders(array $providers): void;
 
     public function registerProvider(ServiceProviderInterface $provider): ContainerInterface;
 }

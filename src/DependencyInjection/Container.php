@@ -172,7 +172,7 @@ class Container implements ContainerInterface
     /**
      * @param array<string>|array<object> $providers
      */
-    public function registerProviders(array $providers): ContainerInterface
+    public function registerProviders(array $providers): void
     {
         foreach ($providers as $provider) {
             $isObject = is_object($provider);
@@ -190,8 +190,6 @@ class Container implements ContainerInterface
             }
             $this->registerProvider($provider);
         }
-
-        return $this;
     }
 
     public function registerProvider(ServiceProviderInterface $provider): ContainerInterface
