@@ -7,7 +7,6 @@ namespace Amorfx\Qube\DependencyInjection\Builder;
 use Amorfx\Qube\DependencyInjection\Builder\Validators\ServiceConfigValidator;
 use Amorfx\Qube\DependencyInjection\Container;
 use Amorfx\Qube\DependencyInjection\ContainerInterface;
-use Amorfx\Qube\Exceptions\NotFoundException;
 
 class ContainerBuilder
 {
