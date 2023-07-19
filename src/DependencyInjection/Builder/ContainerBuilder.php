@@ -13,6 +13,7 @@ class ContainerBuilder
 {
     public function __construct(
         private string $configFilePath = '',
+        private array $config = [],
         private ?ContainerInterface $container = null
     ) {
     }
@@ -27,52 +28,50 @@ class ContainerBuilder
     public function get(): ContainerInterface
     {
         $this->container = new Container();
+
         if (! empty($this->configFilePath)) {
-            $config = require $this->configFilePath;
+            $this->config = require $this->configFilePath;
 
-            if (! is_array($config)) {
-                throw new \Exception('Config is not an array'); // TODO change type exception
-            }
-
-            $this->processProviders($config)
-                ->processParams($config);
+            $this->processProviders()
+                ->processParams()
+                ->processServices();
         }
 
         return $this->container;
     }
 
-    private function processProviders(array $config): self
+    private function processProviders(): self
     {
-        $hasProviders = array_key_exists('providers', $config) && ! empty($config['providers']);
+        $hasProviders = array_key_exists('providers', $this->config) && ! empty($this->config['providers']);
 
         return $this;
     }
 
-    private function processParams(array $config): self
+    private function processParams(): self
     {
-        if (! array_key_exists('parameters', $config) || empty($config['parameters'])) {
+        if (! array_key_exists('parameters', $this->config) || empty($this->config['parameters'])) {
             return $this;
         }
 
-        foreach ($config['parameters'] as $id => $value) {
+        foreach ($this->config['parameters'] as $id => $value) {
             $this->container->setParameter($id, $value);
         }
 
         return $this;
     }
 
-    private function processServices(array $config): self
+    private function processServices(): self
     {
-        if (! array_key_exists('services', $config) || empty($config['services'])) {
+        if (! array_key_exists('services', $this->config) || empty($this->config['services'])) {
             return $this;
         }
 
         $serviceConfigValidator = new ServiceConfigValidator();
 
-        foreach ($config['services'] as $id => $arrayServiceConfig) {
+        foreach ($this->config['services'] as $id => $arrayServiceConfig) {
             $serviceConfigValidator->validateOrThrow($arrayServiceConfig);
 
-            $this->container->set($id, $factory);
+
         }
 
         return $this;
