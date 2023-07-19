@@ -3,8 +3,10 @@
 namespace Amorfx\Qube\Tests;
 
 use Amorfx\Qube\DependencyInjection\Container;
-use PHPUnit\Framework\TestCase;
+
 use function Amorfx\Qube\qube;
+
+use PHPUnit\Framework\TestCase;
 
 class HelpersTest extends TestCase
 {
