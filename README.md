@@ -1,7 +1,7 @@
 # Qube
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/clementdecou/qube.svg?style=flat-square)](https://packagist.org/packages/clementdecou/qube)
-[![Tests](https://img.shields.io/github/actions/workflow/status/amorfx/qube/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/amorfx/qube/actions/workflows/run-tests.yml)
+[![Tests](https://github.com/Amorfx/qube/actions/workflows/run-tests.yml/badge.svg)](https://github.com/Amorfx/qube/actions/workflows/run-tests.yml)
 [![Total Downloads](https://img.shields.io/packagist/dt/clementdecou/qube.svg?style=flat-square)](https://packagist.org/packages/qube/qube-php)
 
 Qube is a lightweight and simple dependency injection container.
