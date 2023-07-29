@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Amorfx\Qube;
 
+use Amorfx\Qube\DependencyInjection\Builder\ContainerBuilder;
 use Amorfx\Qube\DependencyInjection\Container;
 
 function qube(): Container
@@ -15,4 +16,9 @@ function qube(): Container
     }
 
     return $container;
+}
+
+function quBuilder(): ContainerBuilder
+{
+    return new ContainerBuilder();
 }
