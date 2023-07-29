@@ -9,7 +9,7 @@ use Closure;
 /**
  * A definition describe a Service
  * - The service can be shareable or not (only one instance or not)
- * - Have the factory method
+ * - Have a factory method
  */
 class Definition
 {
