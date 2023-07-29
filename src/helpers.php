@@ -22,4 +22,3 @@ function quBuilder(): ContainerBuilder
 {
     return new ContainerBuilder();
 }
-
