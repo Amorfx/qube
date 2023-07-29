@@ -6,7 +6,10 @@
     "autoload": {
         "psr-4": {
             "Amorfx\\Qube\\": "src/"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

@@ -20,7 +20,22 @@ composer require clementdecou/qube
 
 ## Usage
 
-TODO
+Creating a container is a matter of creating a Container instance:
+
+```php
+use Qube\Container;
+
+$container = new Container();
+```
+
+Or use the helper function:
+
+```php
+use Amorfx\Qube\qube;
+
+$container = qube();
+```
+It will return a unique instance of the container even if you call it multiple times.
 
 ## Testing
 
